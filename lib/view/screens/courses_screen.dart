@@ -14,6 +14,7 @@ class CourseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Courses'),
+        centerTitle: true,
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('courses').snapshots(),
@@ -21,51 +22,59 @@ class CourseScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          return ListView.builder(
+          return GridView.builder(
+             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2, // Number of columns in the grid
+    crossAxisSpacing: 2, // Spacing between columns
+    mainAxisSpacing: 2, // Spacing between rows
+  ),
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               final Course course =
                   Course.fromSnapshot(snapshot.data!.docs[index]);
               return Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    // Navigate to the EditCoursePage with the selected course
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditCoursePage(course: course),
-                      ),
-                    );
-                  },
-                  child: Dismissible(
-                    key: Key(course.id),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 20.0),
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
-                    confirmDismiss: (direction) async {
-                      return await _confirmDismiss(context, course.id);
+                child: Card(
+                  elevation: 3,
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigate to the EditCoursePage with the selected course
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditCoursePage(course: course),
+                        ),
+                      );
                     },
-                    onDismissed: (direction) {
-                      
-                    },
-                    child: ListTile(
-                      title: Text(
-                        course.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                    child: Dismissible(
+                      key: Key(course.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        color: Colors.red,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: const Icon(Icons.delete, color: Colors.white),
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          for (int i = 0; i < course.modules.length; i++)
-                            Text('Module ${i + 1} : ${course.modules[i]}'),
-                          Text('Payment: ${course.payment}')
-                        ],
+                      confirmDismiss: (direction) async {
+                        return await _confirmDismiss(context, course.id);
+                      },
+                      onDismissed: (direction) {
+                        
+                      },
+                      child: ListTile(
+                        title: Text(
+                          course.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            for (int i = 0; i < course.modules.length; i++)
+                              Text('Module ${i + 1} : ${course.modules[i]}'),
+                            Text('Payment: ${course.payment}')
+                          ],
+                        ),
                       ),
                     ),
                   ),
