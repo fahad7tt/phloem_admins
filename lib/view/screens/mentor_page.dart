@@ -13,6 +13,7 @@ class MentorPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mentors'),
+        centerTitle: true
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('mentors').snapshots(),
@@ -26,45 +27,49 @@ class MentorPage extends StatelessWidget {
             return ListView.separated(
               itemBuilder: (context, index) {
                 final data = snapshot.data!.docs[index];
-                return ListTile(
-                  onTap: () {
-                    _showMentorDetailsDialog(context, data);
-                  },
-                  leading: SizedBox(
-                    height: 50,
-                    width: 50,
-                    child: Image.network(data["image"], fit: BoxFit.cover),
-                  ),
-                  title: Text(data["name"],
-                      style: const TextStyle(fontWeight: FontWeight.w500)),
-                  subtitle: Text(data["email"],
-                      style: const TextStyle(
-                          fontSize: 12.0, fontWeight: FontWeight.w400)),
-                  trailing: SizedBox(
-                    width: 96,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditMentorPage(
-                                  snapshot: data,
-                                  id: data.id,
+                return Card(
+                  elevation: 3,
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    onTap: () {
+                      _showMentorDetailsDialog(context, data);
+                    },
+                    leading: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Image.network(data["image"], fit: BoxFit.cover),
+                    ),
+                    title: Text(data["name"],
+                        style: const TextStyle(fontWeight: FontWeight.w500)),
+                    subtitle: Text(data["email"],
+                        style: const TextStyle(
+                            fontSize: 12.0, fontWeight: FontWeight.w400)),
+                    trailing: SizedBox(
+                      width: 96,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditMentorPage(
+                                    snapshot: data,
+                                    id: data.id,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit, size: 20),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _confirmDeleteMentor(context, data.id);
-                          },
-                          icon: const Icon(Icons.delete, size: 20),
-                        )
-                      ],
+                              );
+                            },
+                            icon: const Icon(Icons.edit, size: 20),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _confirmDeleteMentor(context, data.id);
+                            },
+                            icon: const Icon(Icons.delete, size: 20),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );
