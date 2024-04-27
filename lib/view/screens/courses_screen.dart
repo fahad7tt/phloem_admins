@@ -13,7 +13,7 @@ class CourseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Courses'),
+        title: const Text('All Courses'),
         centerTitle: true,
       ),
       body: StreamBuilder(
@@ -23,7 +23,7 @@ class CourseScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           return GridView.builder(
-             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: 2, // Number of columns in the grid
     crossAxisSpacing: 2, // Spacing between columns
     mainAxisSpacing: 2, // Spacing between rows
