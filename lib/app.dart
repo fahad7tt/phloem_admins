@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:phloem_admin/view/screens/splash%20screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'controller/course_controller.dart';
 import 'controller/mentor_controller.dart';
-import 'view/screens/splash_screen.dart';
+import 'view/const/color/colors.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'E-Learning Admin',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: FColors.themeColor,
         ),
         home: const SplashScreen(),
         debugShowCheckedModeBanner: false,

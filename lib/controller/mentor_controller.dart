@@ -12,7 +12,7 @@ class MentorProvider with ChangeNotifier {
   final List<String> _selectedCourses = [];
   final List<String> _selectedModules = [];
   String? _selectedCourse;
-  List<String> _selectedCourseModules = [];
+  final List<String> _selectedCourseModules = [];
   File? _selectedImage;
 
    String? get selectedCourse => _selectedCourse;
@@ -21,6 +21,15 @@ class MentorProvider with ChangeNotifier {
   List<String> get selectedCourses => _selectedCourses;
   List<String> get selectedModules => _selectedModules;
   File? get selectedImage => _selectedImage;
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
 
   // Method to toggle selected modules
   void toggleSelectedModule(String module) {
@@ -232,5 +241,4 @@ void updateMentor(Mentor updatedMentor) {
     notifyListeners();
   }
 }
-
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:phloem_admin/view/screens/email_validator.dart';
+import 'package:phloem_admin/view/validator/email_validator.dart';
 
 class EmailValidationProvider extends ChangeNotifier {
   String? _emailErrorText;
