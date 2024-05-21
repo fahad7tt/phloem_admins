@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/model/course_model.dart';
-import 'package:phloem_admin/view/const/appbar/appbar_const.dart';
 import 'package:phloem_admin/view/screens/course/edit%20course/edit_courses.dart';
+import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 
 class EditCoursePage extends StatelessWidget {
   final Course course;

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:phloem_admin/view/const/appbar/appbar_const.dart';
 import 'package:phloem_admin/view/const/icon/icon_const.dart';
 import 'package:phloem_admin/view/screens/course/add%20course/add_course_page.dart';
+import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 import 'package:phloem_admin/view/widgets/course/grid%20view/course_grid.dart';
 
 class CourseScreen extends StatelessWidget {

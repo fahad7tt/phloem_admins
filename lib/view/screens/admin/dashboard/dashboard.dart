@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/view/const/color/card_colors.dart';
 import 'package:phloem_admin/view/const/color/colors.dart';
+import 'package:phloem_admin/view/const/credentials/admin_credentials.dart';
 import 'package:phloem_admin/view/const/image/image_const.dart';
-import 'package:phloem_admin/view/screens/admin/profile/profile.dart';
 import 'package:phloem_admin/view/widgets/admin/dashboard%20card/admin_card.dart';
+import 'package:phloem_admin/view/widgets/admin/profile%20list/profile_details.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -16,7 +17,7 @@ class AdminDashboard extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 150),
+              const SizedBox(height: 140),
               const Padding(
                 padding: EdgeInsets.only(right: 180),
                 child: Text(
@@ -43,8 +44,8 @@ class AdminDashboard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ProfilePage(
-                        userEmail: 'johndoe@gmail.com',
-                        userImage: FImages.userImage)),
+                        userEmail: Credentials.adminEmail,
+                        userImage: FImages.adminImage)),
               );
             },
             style: ElevatedButton.styleFrom(

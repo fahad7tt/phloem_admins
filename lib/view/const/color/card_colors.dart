@@ -5,6 +5,5 @@ class CardColors {
     const Color.fromARGB(255, 34, 87, 131),
     const Color.fromARGB(255, 42, 139, 46),
     const Color.fromARGB(255, 127, 48, 151),
-    const Color.fromARGB(255, 36, 109, 114),
   ];
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:phloem_admin/controller/mentor_controller.dart';
 import 'package:phloem_admin/model/course_model.dart';
 import 'package:phloem_admin/model/mentor_model.dart';
-import 'package:phloem_admin/view/screens/mentor/add%20mentor/addmentor_fields.dart';
+import 'package:phloem_admin/view/screens/mentor/add%20mentor/add_mentor_fields.dart';
 import 'package:provider/provider.dart';
 
 class CourseDropdown extends StatelessWidget {
@@ -170,7 +170,7 @@ class AddMentorButton extends StatelessWidget {
                     courses: mentorProvider.selectedCourses.join(', '),
                     imageUrl: imageUrl ?? '',
                     id: '',
-                    selectedModules: mentorProvider.selectedModules,
+                    selectedModule: mentorProvider.selectedModules,
                   ),
                 );
 

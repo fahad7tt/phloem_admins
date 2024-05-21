@@ -1,12 +1,11 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:phloem_admin/controller/mentor_controller.dart';
-import 'package:phloem_admin/view/screens/mentor/add%20mentor/addmentor_fields.dart';
 import 'package:phloem_admin/view/widgets/mentor/add_widget_mentor.dart';
 import 'package:provider/provider.dart';
+import 'add_mentor_fields.dart';
 
 class AddMentorForm extends StatefulWidget {
   const AddMentorForm({super.key});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/view/const/image/image_const.dart';
 import 'package:phloem_admin/view/functions/admin%20functions/signin_functions.dart';
+import 'package:phloem_admin/view/screens/admin/dashboard/dashboard.dart';
 import 'package:phloem_admin/view/screens/admin/sign%20in/signin_form.dart';
-import 'package:phloem_admin/view/screens/dashboard/dashboard.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -31,7 +31,7 @@ class LoginPage extends StatelessWidget {
                 if (!isError) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => AdminDashboard(),
+                      builder: (context) => const AdminDashboard(),
                     ),
                   );
                 }

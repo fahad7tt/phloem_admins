@@ -8,7 +8,7 @@ class Mentor {
  final String password;
  late final String courses;
  final String imageUrl;
- List<String> selectedModules;
+ final List<String> selectedModule;
  File? selectedImage;
   
  Mentor({
@@ -19,6 +19,6 @@ class Mentor {
     required this.imageUrl,
     this.selectedImage,
     required String id,
-    this.selectedModules = const [],
+    required this.selectedModule,
  }) : id = id.isNotEmpty ? id : const Uuid().v4();
 }

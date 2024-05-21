@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/controller/mentor_controller.dart';
@@ -6,7 +7,8 @@ import 'package:phloem_admin/view/screens/mentor/edit%20mentor/edit_mentor_page.
 import 'package:provider/provider.dart';
 
 class MentorFunctions {
-  static Widget buildListView(BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  static Widget buildListView(
+      BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
     return ListView.separated(
       itemBuilder: (context, index) {
         final data = snapshot.data!.docs[index];
@@ -32,25 +34,26 @@ class MentorFunctions {
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditMentorPage(
-                            snapshot: data,
-                            id: data.id,
+                      onPressed: () async {
+                        log("${data["modules"]}");
+                        log("${data["courses"]}");
+                Provider.of<MentorProvider>(context, listen: false).setSelectedCourse(data["courses"], data["modules"]);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditMentorPage(
+                              snapshot: data,
+                              id: data.id,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    icon: FIcons.editIcon
-                  ),
+                        );
+                      },
+                      icon: FIcons.editIcon),
                   IconButton(
-                    onPressed: () {
-                      _confirmDeleteMentor(context, data.id);
-                    },
-                    icon: FIcons.removeIcon
-                  )
+                      onPressed: () {
+                        _confirmDeleteMentor(context, data.id);
+                      },
+                      icon: FIcons.removeIcon)
                 ],
               ),
             ),
@@ -64,7 +67,8 @@ class MentorFunctions {
     );
   }
 
-  static void _showMentorDetailsDialog(BuildContext context, DocumentSnapshot mentorData) {
+  static void _showMentorDetailsDialog(
+      BuildContext context, DocumentSnapshot mentorData) {
     showDialog(
       context: context,
       builder: (context) {

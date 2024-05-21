@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:phloem_admin/view/const/appbar/appbar_const.dart';
-import 'package:phloem_admin/view/const/icon/icon_const.dart';
-import 'package:phloem_admin/view/screens/admin/profile/profile_signout.dart';
-import 'package:phloem_admin/view/widgets/admin/profile%20list/profile_list.dart';
+import 'package:phloem_admin/view/screens/admin/profile/signout/admin_signout.dart';
+import 'package:phloem_admin/view/widgets/admin/profile%20list/profile_list_items.dart';
+import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 
 // ignore: must_be_immutable
 class ProfilePage extends StatelessWidget {
   final String userEmail; // User email
-  String userImage; // User image path
+  String userImage; // User image
 
   ProfilePage({
     super.key,
@@ -30,13 +29,13 @@ class ProfilePage extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundImage: AssetImage(userImage),
-                  radius: 42,
+                  radius: 50,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   userEmail,
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -55,18 +54,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          ProfileListTile(
-            leading: FIcons.settingsIcon,
-            title: 'Settings',
-            trailing: FIcons.forwardArrowIcon,
-            onTap: () {},
-          ),
-          ProfileListTile(
-            leading: FIcons.newspaperIcon,
-            title: 'Guidelines',
-            trailing: FIcons.forwardArrowIcon,
-            onTap: () {},
-          ),
+          const ProfileList(),
           const SignOutButton(),
         ],
       ),

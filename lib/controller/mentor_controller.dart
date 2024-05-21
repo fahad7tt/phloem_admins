@@ -1,4 +1,6 @@
  // ignore_for_file: avoid_print
+import 'dart:developer';
+
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +16,10 @@ class MentorProvider with ChangeNotifier {
   String? _selectedCourse;
   final List<String> _selectedCourseModules = [];
   File? _selectedImage;
+  bool isEdit=false;
+  bool isSameCourse=false;
 
-   String? get selectedCourse => _selectedCourse;
+  String? get selectedCourse => _selectedCourse;
   List<String> get selectedCourseModules => _selectedCourseModules;
   List<Mentor> get mentors => _mentors;
   List<String> get selectedCourses => _selectedCourses;
@@ -31,13 +35,22 @@ class MentorProvider with ChangeNotifier {
     notifyListeners();
   }
 
+ 
   // Method to toggle selected modules
   void toggleSelectedModule(String module) {
+    log(module);
+    log("===-=-=-=-=-=-=${_selectedModules}");
+if(!isSameCourse)
+{
+  _selectedModules.clear();
+    isSameCourse = true;
+}
     if (_selectedModules.contains(module)) {
       _selectedModules.remove(module);
     } else {
       _selectedModules.add(module);
     }
+    log("----------- ----${_selectedModules}");
     notifyListeners();
   }
 
@@ -70,16 +83,24 @@ class MentorProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedCourse(String courseName, List<String> modules) {
+  void setSelectedCourse(String courseName, List<dynamic> modules) {
+    print('i am in set selected couuse ');
+    print(courseName);
+    print(modules);
     _selectedCourse = courseName;
     _selectedCourseModules.clear();
-  _selectedCourseModules.addAll(modules);
+    for(int i=0;i<modules.length;i++)
+    {
+      _selectedCourseModules.add(modules[i].toString()); 
+    }
+  // _selectedCourseModules.addAll(modules as List<String>);
     notifyListeners();
   }
 
-  void setSelectedModules(List<String> modules) {
-  _selectedModules.clear();
-  _selectedModules.addAll(modules);
+  void setSelectedModules(List<String> modules)  {
+    // log("----${modules}");
+  _selectedCourseModules.clear();
+  _selectedCourseModules.addAll(modules);
   notifyListeners();
 }
 
@@ -135,9 +156,12 @@ class MentorProvider with ChangeNotifier {
           'password': mentor.password,
           'courses': mentor.courses,
           'image': mentor.imageUrl,
-          'modules': mentor.selectedModules,
+          'modules': mentor.selectedModule,
         });
         print('Mentor added to Firestore with ID: ${mentor.id}');
+        log('------hey----');
+        log(mentor.courses);
+        log(mentor.selectedModule.toString());
         // Add the mentor to the local list and notify listeners
         _mentors.add(mentor);
         notifyListeners();
@@ -157,9 +181,11 @@ class MentorProvider with ChangeNotifier {
           'password': updatedMentor.password,
           'courses': updatedMentor.courses,
           'image': updatedMentor.imageUrl,
-          'modules': updatedMentor.selectedModules,
+          'modules': updatedMentor.selectedModule,
         });
         print('Mentor updated in Firestore');
+        log('!!!${updatedMentor}');
+        // _mentors.add(updatedMentor);
         notifyListeners(); // Notify listeners to update UI
       } catch (error) {
         print('Error updating mentor in Firestore: $error');

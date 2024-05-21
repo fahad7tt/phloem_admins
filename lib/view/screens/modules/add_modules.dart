@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/controller/course_controller.dart';
-import 'package:phloem_admin/view/const/appbar/appbar_const.dart';
+import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 import 'package:phloem_admin/view/widgets/module/widget_module.dart';
 import 'package:provider/provider.dart';
 

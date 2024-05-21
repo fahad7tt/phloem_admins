@@ -12,4 +12,7 @@ class FIcons{
   static const accountIcon = Icons.manage_accounts;
   static const bookIcon = Icons.book;
   static const feedbackIcon = Icons.feedback_sharp;
+  static const infoIcon = Icon(Icons.info);
+  static const termsIcon = Icon(Icons.file_copy);
+  static const pPolicyIcon = Icon(Icons.policy);
 }

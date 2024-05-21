@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,9 @@ import 'package:phloem_admin/model/course_model.dart';
 import 'package:phloem_admin/model/mentor_model.dart';
 
 class EditFieldBuilder {
-  static Widget buildNameField(BuildContext context, TextEditingController controller) {
+ 
+  static Widget buildNameField(
+      BuildContext context, TextEditingController controller) {
     return TextFormField(
       controller: controller,
       decoration: const InputDecoration(labelText: 'Name'),
@@ -23,7 +26,8 @@ class EditFieldBuilder {
     );
   }
 
-  static Widget buildEmailField(BuildContext context, TextEditingController controller) {
+  static Widget buildEmailField(
+      BuildContext context, TextEditingController controller) {
     return ChangeNotifierProvider(
       create: (_) => EmailValidationProvider(),
       child: Consumer<EmailValidationProvider>(
@@ -38,7 +42,8 @@ class EditFieldBuilder {
               if (value!.isEmpty) {
                 return 'Please enter an email';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                  .hasMatch(value)) {
                 return 'Please enter a valid email';
               }
               return null;
@@ -53,7 +58,8 @@ class EditFieldBuilder {
     );
   }
 
-  static Widget buildPasswordField(BuildContext context, TextEditingController controller) {
+  static Widget buildPasswordField(
+      BuildContext context, TextEditingController controller) {
     return TextFormField(
       controller: controller,
       decoration: const InputDecoration(labelText: 'Password'),
@@ -70,14 +76,17 @@ class EditFieldBuilder {
     );
   }
 
-  static Widget buildCoursesField(BuildContext context, TextEditingController controller, MentorProvider mentorProvider, Mentor mentor) {
+  static Widget buildCoursesField(
+      String initialValue,
+      BuildContext context,
+      TextEditingController controller,
+      MentorProvider mentorProvider,
+      Mentor mentor) {
     return FutureBuilder<List<Course>>(
-      future: FirebaseFirestore.instance
-          .collection('courses')
-          .get()
-          .then((querySnapshot) => querySnapshot.docs
-          .map((doc) => Course.fromSnapshot(doc))
-          .toList()),
+      future: FirebaseFirestore.instance.collection('courses').get().then(
+          (querySnapshot) => querySnapshot.docs
+              .map((doc) => Course.fromSnapshot(doc))
+              .toList()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -85,16 +94,14 @@ class EditFieldBuilder {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final courses = snapshot.data!;
-          String? initialValue;
-          if (mentor.courses.isNotEmpty) {
-            initialValue = courses.any(
-                    (course) => course.name == mentor.courses)
-                ? mentor.courses
-                : null;
-          }
-
+          // if (mentor.courses.isNotEmpty) {
+          //   initialValue = courses.any(
+          //           (course) => course.name == mentor.courses)
+          //       ? mentor.courses
+          //       : null;
+          // }
           return DropdownButtonFormField<String>(
-            value: mentorProvider.selectedCourse ?? initialValue,
+            value: initialValue,
             items: courses.map((course) {
               return DropdownMenuItem<String>(
                 value: course.name,
@@ -102,11 +109,13 @@ class EditFieldBuilder {
               );
             }).toList(),
             onChanged: (value) {
+              print('=-================================ $value');
               controller.text = value!;
               final selectedCourse = courses.firstWhere(
                 (course) => course.name == value,
                 orElse: () => Course.empty,
               );
+              mentorProvider.isSameCourse=false;
               mentorProvider.setSelectedCourse(value, selectedCourse.modules);
             },
             decoration: const InputDecoration(
@@ -124,9 +133,13 @@ class EditFieldBuilder {
     );
   }
 
-  static Widget buildModulesField(BuildContext context, MentorProvider mentorProvider) {
+  static Widget buildModulesField(
+      BuildContext context, MentorProvider mentorProvider,String id) {
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, _) {
+        print('module refresh');
+        print(mentorProvider.selectedCourseModules.contains(mentorProvider.selectedCourseModules[0]));
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -137,16 +150,21 @@ class EditFieldBuilder {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: mentorProvider.selectedCourseModules.length,
               itemBuilder: (context, index) {
-                final module = mentorProvider.selectedCourseModules[index];
+                 
+                 final module = mentorProvider.selectedCourseModules[index];
+        
+                log("$module module ");
+                log("${mentorProvider.selectedModules}");
+                log("${mentorProvider.selectedModules.contains(module)}");
                 return CheckboxListTile(
                   title: Text(module),
                   value: mentorProvider.selectedModules.contains(module),
                   onChanged: (value) {
-                    if (value != null && value) {
-                      mentorProvider.toggleSelectedModule(module);
-                    }
+                    log('on tap');
+                    mentorProvider.toggleSelectedModule(module);
                   },
                 );
+               
               },
             ),
           ],
