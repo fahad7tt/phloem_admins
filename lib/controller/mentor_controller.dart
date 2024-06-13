@@ -1,12 +1,12 @@
  // ignore_for_file: avoid_print
 import 'dart:developer';
-
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/model/course_model.dart';
 import 'package:phloem_admin/model/mentor_model.dart';
+import 'package:phloem_admin/view/const/color/colors.dart';
 
 class MentorProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,19 +27,20 @@ class MentorProvider with ChangeNotifier {
   File? get selectedImage => _selectedImage;
 
   bool _isLoading = false;
+  List<Course> _courses = [];
 
   bool get isLoading => _isLoading;
+  List<Course> get courses => _courses;
 
   void setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
 
- 
   // Method to toggle selected modules
   void toggleSelectedModule(String module) {
     log(module);
-    log("===-=-=-=-=-=-=${_selectedModules}");
+    log("===-=-=-=-=-=-=$_selectedModules");
 if(!isSameCourse)
 {
   _selectedModules.clear();
@@ -50,7 +51,7 @@ if(!isSameCourse)
     } else {
       _selectedModules.add(module);
     }
-    log("----------- ----${_selectedModules}");
+    log("----------- ----$_selectedModules");
     notifyListeners();
   }
 
@@ -146,34 +147,53 @@ if(!isSameCourse)
     }
   }
 
-  Future<void> addMentorToFirestore(Mentor mentor) async {
+  Future<void> addMentorToFirestore(Mentor mentor, BuildContext context) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     if (await isEmailUnique(mentor.email)) {
       try {
-
         await _firestore.collection('mentors').doc(mentor.id).set({
           'name': mentor.name,
           'email': mentor.email,
           'password': mentor.password,
           'courses': mentor.courses,
           'image': mentor.imageUrl,
-          'modules': mentor.selectedModule,
+          'modules': mentor.selectedModules,
         });
         print('Mentor added to Firestore with ID: ${mentor.id}');
-        log('------hey----');
-        log(mentor.courses);
-        log(mentor.selectedModule.toString());
-        // Add the mentor to the local list and notify listeners
         _mentors.add(mentor);
         notifyListeners();
+
+        // Show a success Snackbar
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Mentor added successfully!'),
+            backgroundColor: FColors.successColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
       } catch (error) {
         print('Error adding mentor to Firestore: $error');
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Error adding mentor!'),
+            backgroundColor: FColors.errorColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     } else {
-      print('Email already exists');
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Email already exists'),
+          backgroundColor: FColors.existsColor,
+          duration: Duration(seconds: 2),
+        ),
+      );
     }
   }
 
-  Future<void> editMentorInFirestore(String index, Mentor updatedMentor) async {
+  Future<void> editMentorInFirestore(String index, Mentor updatedMentor, BuildContext context) async {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
       try {
         await _firestore.collection('mentors').doc(index).update({
           'name': updatedMentor.name,
@@ -181,40 +201,41 @@ if(!isSameCourse)
           'password': updatedMentor.password,
           'courses': updatedMentor.courses,
           'image': updatedMentor.imageUrl,
-          'modules': updatedMentor.selectedModule,
+          'modules': updatedMentor.selectedModules,
         });
+
         print('Mentor updated in Firestore');
-        log('!!!${updatedMentor}');
-        // _mentors.add(updatedMentor);
-        notifyListeners(); // Notify listeners to update UI
+        log('!!!$updatedMentor');
+
+        notifyListeners();
+
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Mentor updated successfully!'),
+            backgroundColor: FColors.themeColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
       } catch (error) {
         print('Error updating mentor in Firestore: $error');
       }
   }
 
-//   Future<void> updateMentorModules(String mentorId, List<String> modules) async {
-//   try {
-//     await _firestore.collection('mentors').doc(mentorId).update({
-//       'modules': modules,
-//     });
-//     print('Mentor modules updated in Firestore');
-//     notifyListeners(); // Notify listeners to update UI
-//   } catch (error) {
-//     print('Error updating mentor modules in Firestore: $error');
-//   }
-// }
+  MentorProvider() {
+    _fetchCourses();
+  }
 
-  Future<List<Course>> fetchCourses() async {
+  Future<void> _fetchCourses() async {
+    setLoading(true);
     try {
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('courses').get();
-      List<Course> courses =
+      _courses =
           querySnapshot.docs.map((doc) => Course.fromSnapshot(doc)).toList();
-      return courses;
     } catch (e) {
       print('Error fetching courses: $e');
-      return [];
     }
+    setLoading(false);
   }
 
   Future<bool> isEmailUnique(String email) async {

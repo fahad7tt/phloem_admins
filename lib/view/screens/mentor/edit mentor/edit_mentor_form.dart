@@ -27,7 +27,7 @@ class EditMentorForm extends StatelessWidget {
       courses: snapshot["courses"],
       imageUrl: snapshot["image"],
       id: id,
-      selectedModule: snapshot["modules"] != null
+      selectedModules: snapshot["modules"] != null
           ? List<String>.from(snapshot["modules"])
           : [],
     );
@@ -43,7 +43,7 @@ class EditMentorForm extends StatelessWidget {
     TextEditingController coursesController =
         TextEditingController(text: mentored.courses);
         mentorProvider.selectedModules.clear();
-        mentorProvider.selectedModules.addAll(mentored.selectedModule);    
+        mentorProvider.selectedModules.addAll(mentored.selectedModules);    
 
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, _) {
@@ -65,6 +65,7 @@ class EditMentorForm extends StatelessWidget {
               EditFieldBuilder.buildModulesField(context, mentorProvider,id),
               EditImageWidget.buildImagePicker(
                   context, mentorProvider, picker, mentored),
+                  const SizedBox(height: 12),
               buildSaveButton(
                   context,
                   formKey,
@@ -89,7 +90,7 @@ class EditMentorForm extends StatelessWidget {
       TextEditingController passwordController,
       TextEditingController coursesController,
       MentorProvider mentorProvider,
-      Mentor mentored) {
+      Mentor mentored) { 
     return Center(
       child: ElevatedButton(
         onPressed: () async {
@@ -111,8 +112,10 @@ class EditMentorForm extends StatelessWidget {
                 courses: coursesController.text,
                 imageUrl: imageUrl ?? '',
                 id: '',
-                selectedModule: mentorProvider.selectedModules,
+                selectedModules: mentorProvider.selectedModules,
               ),
+              // ignore: use_build_context_synchronously
+              context,
             );
             final updatedMentor = Mentor(
               name: nameController.text,
@@ -121,7 +124,7 @@ class EditMentorForm extends StatelessWidget {
               courses: coursesController.text,
               imageUrl: imageUrl ?? '',
               id: id,
-              selectedModule: mentorProvider.selectedModules,
+              selectedModules: mentorProvider.selectedModules,
             );
             mentorProvider.updateMentor(updatedMentor);
             mentorProvider.setSelectedImage(null);

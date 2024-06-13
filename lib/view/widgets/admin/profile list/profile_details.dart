@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:phloem_admin/view/screens/admin/profile/signout/admin_signout.dart';
 import 'package:phloem_admin/view/widgets/admin/profile%20list/profile_list_items.dart';
 import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 
@@ -54,8 +53,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          const ProfileList(),
-          const SignOutButton(),
+          const ProfileList(),     
         ],
       ),
     );

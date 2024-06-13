@@ -16,36 +16,31 @@ class CourseDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, _) {
-        return FutureBuilder<List<Course>>(
-          future: mentorProvider.fetchCourses(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final courses = snapshot.data!;
-              return DropdownButtonFormField<String>(
-                value: mentorProvider.selectedCourses.isNotEmpty
-                    ? mentorProvider.selectedCourses.first
-                    : null,
-                items: courses
-                    .map((course) => DropdownMenuItem<String>(
-                          value: course.name,
-                          child: Text(course.name),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  mentorProvider.resetState();
-                  mentorProvider.toggleSelectedCourse(value!);
-                },
-                decoration: const InputDecoration(labelText: 'Courses'),
-                validator: (value) =>
-                    value == null ? 'Please select a course' : null,
-              );
-            }
-          },
-        );
+        if (mentorProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (mentorProvider.courses.isEmpty) {
+          return const Center(child: Text('No courses available'));
+        } else {
+          final courses = mentorProvider.courses;
+          return DropdownButtonFormField<String>(
+            value: mentorProvider.selectedCourses.isNotEmpty
+                ? mentorProvider.selectedCourses.first
+                : null,
+            items: courses
+                .map((course) => DropdownMenuItem<String>(
+                      value: course.name,
+                      child: Text(course.name),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              mentorProvider.resetState();
+              mentorProvider.toggleSelectedCourse(value!);
+            },
+            decoration: const InputDecoration(labelText: 'Courses'),
+            validator: (value) =>
+                value == null ? 'Please select a course' : null,
+          );
+        }
       },
     );
   }
@@ -60,33 +55,27 @@ class ModuleCheckboxListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, _) {
-        return FutureBuilder<List<Course>>(
-          future: mentorProvider.fetchCourses(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              final courses = snapshot.data!;
-              final selectedCourse = mentorProvider.selectedCourses.isNotEmpty
-                  ? courses.firstWhere(
-                      (course) =>
-                          course.name == mentorProvider.selectedCourses.first,
-                      orElse: () => Course.empty,
-                    )
-                  : Course.empty;
+        if (mentorProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (mentorProvider.courses.isEmpty) {
+          return const Center(child: Text('No courses available'));
+        } else {
+          final selectedCourse = mentorProvider.selectedCourses.isNotEmpty
+              ? mentorProvider.courses.firstWhere(
+                  (course) =>
+                      course.name == mentorProvider.selectedCourses.first,
+                  orElse: () => Course.empty,
+                )
+              : Course.empty;
 
-              return ModuleCheckboxList(
-                modules: selectedCourse.modules,
-                selectedModules: mentorProvider.selectedModules,
-                onModuleSelected: (module) {
-                  mentorProvider.toggleSelectedModule(module);
-                },
-              );
-            }
-          },
-        );
+          return ModuleCheckboxList(
+            modules: selectedCourse.modules,
+            selectedModules: mentorProvider.selectedModules,
+            onModuleSelected: (module) {
+              mentorProvider.toggleSelectedModule(module);
+            },
+          );
+        }
       },
     );
   }
@@ -126,7 +115,8 @@ class AddMentorButton extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
-  const AddMentorButton({super.key, 
+  const AddMentorButton({
+    super.key,
     required this.mentorProvider,
     required this.formKey,
     required this.imageFile,
@@ -141,20 +131,51 @@ class AddMentorButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () async {
           if (formKey.currentState!.validate()) {
-            _showProgressIndicator(true);
-            final isPasswordUnique =
-                await mentorProvider.isPasswordUnique(passwordController.text);
+            if (imageFile == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please add an image'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              return;
+            }
+
+            if (mentorProvider.selectedModules.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please select at least one module'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              return;
+            }
+
+             // Show loading indicator
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            );
+
+            mentorProvider.setLoading(false);
+            final isPasswordUnique = await mentorProvider.isPasswordUnique(passwordController.text);
 
             if (!isPasswordUnique) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Password already exists'),
-                  duration: Duration(seconds: 3),
+                  duration: Duration(seconds: 2),
                 ),
               );
+              mentorProvider.setLoading(false);
+              return;
             } else {
-              bool isEmailUnique =
-                  await mentorProvider.isEmailUnique(emailController.text);
+              bool isEmailUnique = await mentorProvider.isEmailUnique(emailController.text);
 
               if (isEmailUnique) {
                 String? imageUrl;
@@ -162,7 +183,7 @@ class AddMentorButton extends StatelessWidget {
                   imageUrl = await mentorProvider.uploadImage(imageFile!);
                 }
 
-                mentorProvider.addMentorToFirestore(
+                await mentorProvider.addMentorToFirestore(
                   Mentor(
                     name: nameController.text,
                     email: emailController.text,
@@ -170,21 +191,23 @@ class AddMentorButton extends StatelessWidget {
                     courses: mentorProvider.selectedCourses.join(', '),
                     imageUrl: imageUrl ?? '',
                     id: '',
-                    selectedModule: mentorProvider.selectedModules,
+                    selectedModules: mentorProvider.selectedModules,
                   ),
+                  context,
                 );
 
                 mentorProvider.resetSelectedCourses();
-
                 Navigator.pop(context);
-                _showProgressIndicator(false);
+                mentorProvider.setLoading(false);
+                Navigator.pop(context);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Email already exists'),
-                    duration: Duration(seconds: 3),
+                    duration: Duration(seconds: 2),
                   ),
                 );
+                mentorProvider.setLoading(false);
               }
             }
           }
@@ -192,9 +215,5 @@ class AddMentorButton extends StatelessWidget {
         child: const Text('Add Mentor'),
       ),
     );
-  }
-
-  void _showProgressIndicator(bool show) {
-    mentorProvider.setLoading(show);
   }
 }

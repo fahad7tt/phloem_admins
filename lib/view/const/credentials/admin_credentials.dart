@@ -1,4 +1,4 @@
 class Credentials{
-  static const String adminEmail = "a";
-  static const String adminPassword = "a";
+  static const String adminEmail = "admin@example.com";
+  static const String adminPassword = "admin12";
 }

@@ -19,7 +19,7 @@ class AdminGridView extends StatelessWidget {
         'onTap': () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const EnrolledStudents()),
+            MaterialPageRoute(builder: (context) => const UsersList()),
           );
         },
         'color': cardColors[0],

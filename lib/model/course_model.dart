@@ -6,13 +6,17 @@ class Course {
   List<String> modules;
   String payment;
   List<String> descriptions;
+  String amount;
+  List<String>? enrolledUsers;
 
   Course({
     required this.id,
     required this.name,
     required this.modules,
     required this.payment,
-    required this.descriptions
+    required this.descriptions,
+    required this.amount,
+    this.enrolledUsers
   });
 
   factory Course.fromSnapshot(DocumentSnapshot snapshot) {
@@ -26,6 +30,8 @@ class Course {
       modules: List<String>.from(data['modules'] ?? []),
       payment: data['payment'] ?? '',
       descriptions: _getDescription(data['descriptions']),
+      amount: data['amount'] ?? '',
+      enrolledUsers: List<String>.from(data['enrolledUsers'] ?? [])
     );
   }
 
@@ -43,6 +49,8 @@ class Course {
         name: '',
         modules: [],
         payment: '',
-        descriptions: []
+        descriptions: [],
+        amount: '',
+        enrolledUsers: []
       );
 }

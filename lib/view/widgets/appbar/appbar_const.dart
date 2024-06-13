@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:phloem_admin/view/const/color/colors.dart';
+import 'package:phloem_admin/view/const/icon/icon_const.dart';
 import 'package:phloem_admin/view/screens/admin/dashboard/dashboard.dart';
 
 class FAppBar {
   static final profileAppBar = AppBar(
-    title: const Text('Profile'),
+    title: const Text('Admin Profile'),
     leading: Builder(
       builder: (BuildContext context) {
         return IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: FIcons.backIcon,
           onPressed: () {
             Navigator.push(
                 context,
@@ -23,7 +25,9 @@ class FAppBar {
     title: const Text('Add Course'),
   );
   static final allCourseAppBar = AppBar(
-    title: const Text('All Courses'),
+    title: const Text('Courses'),
+    centerTitle: true,
+    backgroundColor: FColors.appBarColor
   );
   static final editCourseAppBar = AppBar(
     title: const Text('Edit Course'),
@@ -37,6 +41,7 @@ class FAppBar {
   static final mentorsAppBar = AppBar(
     title: const Text('Mentors'),
     centerTitle: true,
+    backgroundColor: FColors.appBarColor
   );
   static final addModulesAppBar = AppBar(
     title: const Text('Add Modules'),
@@ -45,7 +50,6 @@ class FAppBar {
     title: const Text('App Info'),
     centerTitle: true,
   );
-
   static final guidelinesAppBar = AppBar(
     title: const Text('Admin Guidelines'),
   );
@@ -54,5 +58,10 @@ class FAppBar {
   );
   static final termsAppBar = AppBar(
     title: const Text('Terms and Conditions'),
+  );
+  static final studentsListAppBar = AppBar(
+    title: const Text('Students List'),
+    centerTitle: true,
+    backgroundColor: FColors.appBarColor
   );
 }

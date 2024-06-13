@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:phloem_admin/model/users_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:phloem_admin/model/users_model.dart';
 
 class SignUpController extends GetxController {
   final formKey = GlobalKey<FormState>();
-  final signUpModel = UserModel(name: '', email: '', password: '');
+  final signUpModel = UserModel(id: '', name: '', email: '', password: '');
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();

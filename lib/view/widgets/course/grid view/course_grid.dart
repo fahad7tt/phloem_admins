@@ -49,18 +49,45 @@ class CourseGridView extends StatelessWidget {
                 },
                 onDismissed: (direction) {},
                 child: ListTile(
-                  title: Text(
-                    course.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 26),
+                    child: Text(
+                      course.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 5 ),
+                      const SizedBox(height: 6),
+                      const Text('Modules: ',
+                      style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black)),
                       for (int i = 0; i < course.modules.length; i++)
-                        Text('Module ${i + 1} : ${course.modules[i]}',
-                        style: const TextStyle(fontSize: 13)),
-                      Text('Payment: ${course.payment}')
+                        Text(course.modules[i],
+                        style: const TextStyle(fontSize: 14)),
+                        const SizedBox(height: 6),
+                      RichText(
+                      text: TextSpan(
+                      text: 'Payment: ',
+                      style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                        text: course.payment,
+                        style: const TextStyle(fontWeight: FontWeight.w400)),
+                      ]),
+                      ),
+                      const SizedBox(height: 6),
+                      if(course.payment == 'paid')
+                      RichText(
+                      text: TextSpan(
+                      text: 'Amount: ',
+                      style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                        text: course.amount,
+                        style: const TextStyle(fontWeight: FontWeight.w400)),
+                      ]),
+                      ),
                     ],
                   ),
                 ),

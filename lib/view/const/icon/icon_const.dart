@@ -15,4 +15,5 @@ class FIcons{
   static const infoIcon = Icon(Icons.info);
   static const termsIcon = Icon(Icons.file_copy);
   static const pPolicyIcon = Icon(Icons.policy);
+  static const backIcon = Icon(Icons.arrow_back);
 }

@@ -5,12 +5,14 @@ class EditFormBuilder {
   late List<TextEditingController> moduleControllers;
   late List<TextEditingController> descriptionControllers;
   late String selectedPayment;
+  final void Function(String) onPaymentSelected;
 
   EditFormBuilder(
       this.courseNameController,
       this.moduleControllers,
       this.descriptionControllers,
       this.selectedPayment,
+      this.onPaymentSelected,
       );
 
   Widget buildCourseNameField() {
@@ -31,6 +33,7 @@ class EditFormBuilder {
       value: selectedPayment,
       onChanged: (value) {
         selectedPayment = value!;
+        onPaymentSelected(value);
       },
       validator: (value) {
         if (value == null || value.isEmpty) {

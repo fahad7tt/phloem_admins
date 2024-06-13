@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phloem_admin/view/const/color/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:phloem_admin/controller/course_controller.dart';
 import 'package:phloem_admin/model/course_model.dart';
@@ -7,6 +8,7 @@ bool validateForm(
     TextEditingController courseNameController,
     List<TextEditingController> moduleControllers,
     List<TextEditingController> descriptionControllers,
+    TextEditingController amountController,
     BuildContext context) {
   // Validate course name
   if (courseNameController.text.isEmpty) {
@@ -24,6 +26,15 @@ bool validateForm(
       return false;
     }
   }
+
+  // Validate amount if payment is 'paid'
+  if (amountController.text.isNotEmpty) {
+    if (double.tryParse(amountController.text) == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a valid amount')));
+    return false;
+    }
+  }
   return true;
 }
 
@@ -34,7 +45,7 @@ Future<void> showRemoveModuleDialog(
     int index) async {
   return showDialog<void>(
     context: context,
-    barrierDismissible: false, // user must tap button to close dialog
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text('Remove Module'),
@@ -57,7 +68,7 @@ Future<void> showRemoveModuleDialog(
             onPressed: () {
               moduleControllers.removeAt(index);
               descriptionControllers.removeAt(index);
-              Navigator.of(context).pop(); // Close the dialog
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -72,7 +83,8 @@ void saveChanges(
     TextEditingController courseNameController,
     List<TextEditingController> moduleControllers,
     String selectedPayment,
-    List<TextEditingController> descriptionControllers) {
+    List<TextEditingController> descriptionControllers,
+    TextEditingController amountController){
   final courseProvider = Provider.of<CourseProvider>(context, listen: false);
   final newCourseName = courseNameController.text;
   final newModules =
@@ -80,11 +92,18 @@ void saveChanges(
   final newPayment = selectedPayment;
   final newDescriptions =
       descriptionControllers.map((controller) => controller.text).toList();
+  final newAmount = selectedPayment == 'paid' ? amountController.text : '0';
 
-  // Update the course in the provider
   courseProvider.updateCourse(
-      course, newCourseName, newModules, newPayment, newDescriptions);
+      course, newCourseName, newModules, newPayment, newDescriptions, newAmount);
 
-  // Navigate back to the previous screen
   Navigator.pop(context);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Course details updated successfully'),
+                  backgroundColor: FColors.themeColor,
+                  duration: Duration(seconds: 2),
+                ),
+              );
 }

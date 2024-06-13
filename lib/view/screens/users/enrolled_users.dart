@@ -1,43 +1,49 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 
-class EnrolledStudents extends StatelessWidget {
-  const EnrolledStudents({super.key});
+class UsersList extends StatelessWidget {
+  const UsersList({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Enrolled Students'),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error fetching data'));
-          }
-          final students = snapshot.data?.docs;
-          if (students == null || students.isEmpty) {
-            return const Center(child: Text('No students enrolled'));
-          }
-          return ListView.separated(
-            itemCount: students.length,
-            separatorBuilder: (BuildContext context, int index) => const Divider(),
-            itemBuilder: (context, index) {
-              final student = students[index].data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text(
-                  student['name'],
-                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
-                ),
-                subtitle: Text('User ID: ${students[index].id}'),
+      appBar: FAppBar.studentsListAppBar,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            },
-          );
-        },
+            }
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Error fetching data'),
+              );
+            }
+            final users = snapshot.data!.docs;
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final userData = users[index].data() as Map<String, dynamic>;
+                final name = userData['username'] ?? ''; 
+                final email = userData['email'] ?? 'No email';
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0 ),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                      subtitle: Text(email),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

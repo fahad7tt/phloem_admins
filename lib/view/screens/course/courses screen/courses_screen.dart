@@ -12,14 +12,17 @@ class CourseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: FAppBar.allCourseAppBar,
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('courses').snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return CourseGridView(courseDocuments: snapshot.data!.docs);
-        },
+      body: Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection('courses').snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return CourseGridView(courseDocuments: snapshot.data!.docs);
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

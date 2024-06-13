@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phloem_admin/controller/course_controller.dart';
+import 'package:phloem_admin/view/const/color/colors.dart';
 import 'package:phloem_admin/view/widgets/appbar/appbar_const.dart';
 import 'package:phloem_admin/view/widgets/module/widget_module.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +9,9 @@ import 'package:provider/provider.dart';
 class AddModulesPage extends StatelessWidget {
   final String courseName;
   final String payment;
+  final String amount;
 
-  AddModulesPage({super.key, required this.courseName, required this.payment});
+  AddModulesPage({super.key, required this.courseName, required this.payment, required this.amount});
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController moduleController = TextEditingController();
@@ -28,9 +30,7 @@ class AddModulesPage extends StatelessWidget {
 );
 
     return Scaffold(
-      appBar: AppBar(
-        title: FAppBar.addModulesAppBar
-      ),
+      appBar: FAppBar.addModulesAppBar,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -62,6 +62,7 @@ class AddModulesPage extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Module $moduleCount added'),
+                        duration: const Duration(seconds: 1),
                       ),
                     );
                   }
@@ -89,8 +90,15 @@ class AddModulesPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Provider.of<CourseProvider>(context, listen: false)
-                      .addCourse(courseName, modules, payment, descriptions);
+                      .addCourse(courseName, modules, payment, descriptions, amount);
                   Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('$courseName course added successfully'),
+                  backgroundColor: FColors.successColor,
+                  duration: const Duration(seconds: 3),
+                ),
+              );
                 },
                 child: const Text('Submit'),
               ),

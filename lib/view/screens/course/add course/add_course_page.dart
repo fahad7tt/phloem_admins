@@ -16,13 +16,14 @@ class AddCoursePage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: AddCourseForm(
-            onNextPressed: (String courseName, String selectedPayment) {
+            onNextPressed: (String courseName, String selectedPayment, String? amount) {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddModulesPage(
                     courseName: courseName,
                     payment: selectedPayment,
+                    amount: amount ?? '',
                   ),
                 ),
               ).then((value) {
@@ -38,6 +39,7 @@ class AddCoursePage extends StatelessWidget {
                     returnedModules,
                     selectedPayment,
                     returnedDescriptions,
+                    amount ?? ''
                   );
                 }
               });

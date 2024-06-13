@@ -17,6 +17,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
   late TextEditingController _courseNameController;
   late List<TextEditingController> _moduleControllers;
   late List<TextEditingController> _descriptionControllers;
+  late TextEditingController _amountController;
   late TextEditingController _paymentController;
   String _selectedPayment = '';
 
@@ -33,6 +34,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
       (index) => TextEditingController(text: widget.course.descriptions[index]),
     );
     _selectedPayment = widget.course.payment;
+    _amountController = TextEditingController(text: widget.course.amount);
     _paymentController = TextEditingController(text: _selectedPayment);
   }
 
@@ -45,6 +47,7 @@ class _EditCourseFormState extends State<EditCourseForm> {
     for (var controller in _descriptionControllers) {
       controller.dispose();
     }
+    _amountController.dispose();
     _paymentController.dispose();
     super.dispose();
   }
@@ -57,6 +60,11 @@ class _EditCourseFormState extends State<EditCourseForm> {
       _moduleControllers,
       _descriptionControllers,
       _selectedPayment,
+      (String payment) {
+        setState(() {
+          _selectedPayment = payment;
+        });
+      },
     );
 
     return Column(
@@ -66,6 +74,23 @@ class _EditCourseFormState extends State<EditCourseForm> {
         const SizedBox(height: 16),
         formFieldBuilder.buildPaymentDropdown(),
         const SizedBox(height: 16),
+         if (_selectedPayment == 'paid')
+        TextFormField(
+          controller: _amountController,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: 'Amount (₹)',
+          ),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Please enter an amount';
+            }
+            if (double.tryParse(value) == null) {
+              return 'Please enter a valid number';
+            }
+            return null;
+          },
+        ),const SizedBox(height: 16),
         const Text('Modules',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
@@ -113,10 +138,10 @@ class _EditCourseFormState extends State<EditCourseForm> {
         formFieldBuilder.buildSaveChangesButton(() {
           // Validate the form
           if (validateForm(_courseNameController, _moduleControllers,
-              _descriptionControllers, context)) {
+              _descriptionControllers, _amountController, context)) {
             // Save changes and pop the page
             saveChanges(context, widget.course, _courseNameController,
-                _moduleControllers, _selectedPayment, _descriptionControllers);
+                _moduleControllers, _selectedPayment, _descriptionControllers, _amountController);
           }
         }),
       ],
